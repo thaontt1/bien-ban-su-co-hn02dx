@@ -17,7 +17,7 @@ var CONFIG = {
   //    HUONG_DAN_TUNG_BUOC.md) thì dán URL /exec vào đây rồi mới push repo.
   //    TUYỆT ĐỐI không dán URL của HY01 vào — biên bản 2 kho mới sẽ chạy vào
   //    Sheet và nhóm Telegram của HY01 mà KHÔNG báo lỗi gì.
-  API_URL: 'CHUA_DIEN_URL_APPS_SCRIPT',
+  API_URL: 'https://script.google.com/a/macros/ghn.vn/s/AKfycbwJoMRU3u0k0R9Pwn9iKtsxJN-Cd-t9BKxdl8MMo6zR8xd310gba4QzPaxYIBGLMlpS/exec',
 
   // Dùng khi không gọi được danh mục từ Sheet (mất mạng giữa chừng, backend lỗi).
   FALLBACK: {
