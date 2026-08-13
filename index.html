@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>Biên bản sự cố giao nhận hàng</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="wrap">
+
+  <header class="hdr">
+    <div class="hdr-mark">GHN</div>
+    <div>
+      <h1>Biên bản sự cố giao nhận hàng</h1>
+      <p class="hdr-sub" id="hdrLoc">Đang tải…</p>
+    </div>
+  </header>
+
+  <!-- màn chờ trong lúc lấy danh mục khu vực -->
+  <div class="boot" id="boot">
+    <div class="spinner"></div>
+    <p>Đang tải danh mục khu vực…</p>
+  </div>
+
+  <div id="bootErr" class="err" hidden></div>
+
+  <form id="frm" novalidate hidden>
+
+    <!-- --------------------------------------------------------- khu vực -->
+    <section class="card">
+      <h2>Nơi xảy ra sự cố</h2>
+
+      <!-- Kho: có ở cụm HN02 + Dương Xá, KHÔNG có ở bản HY01.
+           Hai kho dùng chung một Sheet nên đây là thứ duy nhất tách được số
+           liệu hai kho. Để trống là chặn gửi (cả phía máy lẫn phía server). -->
+      <div class="field">
+        <label for="kho">Kho <span class="req">*</span></label>
+        <select id="kho" required>
+          <option value="">— Chọn kho —</option>
+        </select>
+        <p class="hint" id="khoHint">Quét đúng tem QR dán tại kho thì ô này tự điền sẵn.</p>
+      </div>
+
+      <div class="field">
+        <label for="maKhuVuc">Khu vực <span class="req">*</span></label>
+        <input id="maKhuVuc" type="text" placeholder="VD: Cổng xuất 01" required>
+        <p class="hint">Ghi rõ vị trí xảy ra sự cố trong kho.</p>
+      </div>
+    </section>
+
+    <!-- ----------------------------------------------- BÊN A — giao hàng -->
+    <section class="card">
+      <h2><span class="side-tag">A</span> Bên giao hàng</h2>
+
+      <div class="field">
+        <label for="aDonVi">Đơn vị <span class="req">*</span></label>
+        <input id="aDonVi" type="text" autocapitalize="characters" placeholder="VD: VẬN TẢI" required>
+      </div>
+
+      <div class="field">
+        <label for="aDaiDien">Đại diện là ông (bà) <span class="req">*</span></label>
+        <input id="aDaiDien" type="text" placeholder="Họ tên người giao" required>
+      </div>
+
+      <div class="field">
+        <label for="aBoPhan">Bộ phận <span class="req">*</span></label>
+        <input id="aBoPhan" type="text" autocapitalize="characters" placeholder="VD: TÀI XẾ" required>
+      </div>
+
+      <div class="field">
+        <label for="aSdt">Số điện thoại</label>
+        <input id="aSdt" type="tel" inputmode="tel" placeholder="Không bắt buộc">
+      </div>
+
+      <div class="field">
+        <label for="bienKiemSoat">Biển kiểm soát <span class="req">*</span></label>
+        <input id="bienKiemSoat" type="text" autocapitalize="characters"
+               placeholder="VD: 50H-61046" required>
+      </div>
+
+      <div class="field">
+        <label for="maChuyenDi">Mã chuyến đi <span class="req">*</span></label>
+        <div class="scan-row">
+          <input id="maChuyenDi" type="text" autocapitalize="characters"
+                 placeholder="VD: E260731R72L7IAR" required>
+          <button type="button" class="btn-scan" data-scan="maChuyenDi"
+                  aria-label="Quét mã vạch mã chuyến đi">📷</button>
+        </div>
+        <p class="hint">Bấm 📷 để quét mã vạch trên chứng từ thay vì gõ tay.</p>
+        <p class="hint" id="scanHint" hidden>⚠️ Máy này không dùng được camera — nhập tay giúp mình.</p>
+      </div>
+    </section>
+
+    <!-- ----------------------------------------------- BÊN B — nhận hàng -->
+    <section class="card">
+      <h2><span class="side-tag">B</span> Bên nhận hàng</h2>
+
+      <div class="field">
+        <label for="bDonVi">Đơn vị / Kho <span class="req">*</span></label>
+        <input id="bDonVi" type="text" autocapitalize="characters"
+               placeholder="VD: KHO TRUNG CHUYỂN HÀ NỘI 01" required>
+        <p class="hint">Điền sẵn theo khu vực nếu tra được — vẫn sửa được.</p>
+      </div>
+
+      <div class="field">
+        <label for="bDaiDien">Đại diện là ông (bà) <span class="req">*</span></label>
+        <input id="bDaiDien" type="text" placeholder="Họ tên người nhận" required>
+      </div>
+
+      <div class="field">
+        <label for="bBoPhan">Bộ phận <span class="req">*</span></label>
+        <input id="bBoPhan" type="text" autocapitalize="characters"
+               placeholder="VD: NHẬN XUẤT HÀNG HÓA" required>
+      </div>
+    </section>
+
+    <!-- ------------------------------------------------------------ seal -->
+    <section class="card">
+      <h2>Tình trạng seal niêm phong <span class="req">*</span></h2>
+      <div class="choices" id="sealChoices"></div>
+      <div class="field sub" id="sealDgWrap" hidden>
+        <label for="dienGiaiSeal">Diễn giải nội dung seal niêm phong <span class="req">*</span></label>
+        <textarea id="dienGiaiSeal" rows="2" placeholder="Số seal thực tế, khác biệt so với chứng từ…"></textarea>
+      </div>
+    </section>
+
+    <!-- --------------------------------------------------------- sự cố xe -->
+    <section class="card">
+      <h2>Tình trạng xe <span class="req">*</span></h2>
+      <div class="choices" id="xeChoices"></div>
+      <div class="field sub" id="xeDgWrap" hidden>
+        <label for="dienGiaiXe">Diễn giải tình trạng xe <span class="req">*</span></label>
+        <textarea id="dienGiaiXe" rows="2" placeholder="Mô tả tình trạng xe/thùng hàng…"></textarea>
+      </div>
+    </section>
+
+    <!-- -------------------------------------------------------- hàng hoá -->
+    <section class="card">
+      <h2>Tình trạng hàng hóa</h2>
+      <p class="hint top">Tick tất cả trường hợp gặp phải. Bỏ trống nếu hàng bình thường.</p>
+      <div id="hhChoices"></div>
+    </section>
+
+    <!-- ------------------------------------------------------------- ảnh -->
+    <section class="card">
+      <h2>Ảnh hiện trường</h2>
+      <p class="hint top"><span id="maxPhotoTxt">Không giới hạn số ảnh.</span> Ảnh được nén trước khi gửi.</p>
+      <div class="pick-row">
+        <label class="btn-file" for="photoCam">📷 Chụp ảnh</label>
+        <label class="btn-file" for="photoLib">🖼 Chọn từ thư viện</label>
+      </div>
+      <input id="photoCam" type="file" accept="image/*" capture="environment" multiple hidden>
+      <input id="photoLib" type="file" accept="image/*" multiple hidden>
+      <div class="thumbs" id="thumbs"></div>
+    </section>
+
+    <!-- ---------------------------------------------------------- ghi chú -->
+    <section class="card">
+      <h2>Ghi chú thêm</h2>
+      <textarea id="ghiChu" rows="2" placeholder="Không bắt buộc"></textarea>
+    </section>
+
+    <!-- ---------------------------------------------------------- chữ ký -->
+    <section class="card">
+      <h2>Chữ ký xác nhận <span class="req">*</span></h2>
+      <p class="hint top">
+        Hai bên ký trực tiếp bằng ngón tay lên khung bên dưới.
+        Thiếu một chữ ký là không gửi được.
+      </p>
+
+      <div class="sign-box">
+        <div class="sign-head">
+          <span class="sign-role">Bên giao hàng</span>
+          <button type="button" class="btn-clear" data-clear="Giao">Ký lại</button>
+        </div>
+        <canvas class="sign-pad" id="padGiao" width="600" height="200"
+                aria-label="Khung ký của bên giao hàng"></canvas>
+        <p class="sign-name" id="nameGiao">Chưa ký</p>
+      </div>
+
+      <div class="sign-box">
+        <div class="sign-head">
+          <span class="sign-role">Bên nhận hàng</span>
+          <button type="button" class="btn-clear" data-clear="Nhan">Ký lại</button>
+        </div>
+        <canvas class="sign-pad" id="padNhan" width="600" height="200"
+                aria-label="Khung ký của bên nhận hàng"></canvas>
+        <p class="sign-name" id="nameNhan">Chưa ký</p>
+      </div>
+    </section>
+
+    <div id="errBox" class="err" hidden></div>
+
+    <button type="submit" class="btn-submit" id="btnSubmit">GỬI BIÊN BẢN</button>
+    <p class="foot">Dữ liệu lưu vào Google Sheet và gửi thông báo Telegram ngay sau khi gửi.</p>
+  </form>
+
+  <!-- ------------------------------------------------------ màn kết quả -->
+  <div class="done" id="done" hidden>
+    <div class="done-icon">✅</div>
+    <h2>Đã gửi biên bản</h2>
+    <p class="done-code" id="doneCode"></p>
+    <div id="doneWarn" class="warn" hidden></div>
+    <a id="donePdf" class="btn-link" target="_blank" rel="noopener" hidden>💬 Mở biên bản trên Telegram</a>
+    <button type="button" class="btn-ghost" id="btnAgain">Khai báo biên bản khác</button>
+  </div>
+
+  <div class="overlay" id="overlay" hidden>
+    <div class="spinner"></div>
+    <p id="overlayTxt">Đang gửi…</p>
+  </div>
+
+  <!-- -------------------------------------------------- máy quét mã vạch -->
+  <div class="scanner" id="scanner" hidden>
+    <video id="scanVideo" playsinline muted autoplay></video>
+    <div class="scan-frame">
+      <!-- Báo nhận nằm TRONG khung ngắm để luôn canh giữa đúng khung.
+           Trước đây để ngoài, canh giữa màn hình → lệch 19px so với khung
+           (dòng chữ bên dưới đẩy khung lên) làm chip mã đè lên viền. -->
+      <div class="scan-ok" id="scanOk" hidden>
+        <span class="scan-ok-tick">✓</span>
+        <span class="scan-ok-code" id="scanOkCode"></span>
+      </div>
+    </div>
+    <p class="scan-tip" id="scanTip">Đang mở camera…</p>
+    <p class="scan-got" id="scanGot" hidden></p>
+    <!-- Zoom: đòn bẩy lớn nhất với mã 1D. Chỉ hiện khi máy cho chỉnh. -->
+    <div class="scan-zoom" id="scanZoom" hidden>
+      <button type="button" id="btnZoomOut" aria-label="Thu nhỏ">−</button>
+      <span id="zoomVal">1.0×</span>
+      <button type="button" id="btnZoomIn" aria-label="Phóng to">+</button>
+    </div>
+    <button type="button" class="btn-torch" id="btnTorch" data-on="0"
+            aria-label="Bật tắt đèn" hidden>🔦</button>
+    <div class="scan-actions">
+      <button type="button" class="btn-scan-shot" id="btnScanShot">📸 Chụp để quét</button>
+      <button type="button" class="btn-scan-cancel" id="btnScanCancel">Xong</button>
+    </div>
+    <input id="scanShot" type="file" accept="image/*" capture="environment" hidden>
+  </div>
+</div>
+
+<script src="js/vendor/zxing.min.js"></script>
+<script src="js/config.js"></script>
+<script src="js/constants.js"></script>
+<script src="js/photos.js"></script>
+<script src="js/scan.js"></script>
+<script src="js/sign.js"></script>
+<script src="js/form.js"></script>
+<script src="js/init.js"></script>
+</body>
+</html>
